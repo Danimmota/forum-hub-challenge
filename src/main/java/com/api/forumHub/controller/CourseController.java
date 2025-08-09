@@ -33,8 +33,8 @@ public class CourseController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<CourseDTO> getCourseName(@RequestParam String name) {
-        CourseDTO course = courseService.getCourseName(name);
+    public ResponseEntity<List<CourseDTO>> getCourseName(@RequestParam String name) {
+        List<CourseDTO> course = courseService.getCourseName(name);
         return ResponseEntity.ok(course);
     }
 

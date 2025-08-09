@@ -15,7 +15,9 @@ public class CourseMapper {
         Course course = new Course();
         course.setId(dto.id());
         course.setName(dto.name());
-        List<Topic> topics = dto.topics().stream().map(t -> {
+
+        List<Topic> topics = (dto.topics() == null ? List.<TopicResponseDTO>of() : dto.topics())
+                .stream().map(t -> {
 
             Topic topic = new Topic();
             topic.setId(t.id());
@@ -26,13 +28,16 @@ public class CourseMapper {
             topic.setCourse(course);
             topic.setAuthor(UserMapper.toUserDtoEntity(t.author()));
 
-            List<Answer> answers = t.answers().stream().map(
+            List<Answer> answers = (t.answers() == null ? List.<AnswerDTO>of() : t.answers())
+                    .stream().map(
                     answerDTO -> AnswerMapper.toEntity(answerDTO)
             ).toList();
+
             topic.setAnswers(answers);
 
             return topic;
         }).toList();
+
         course.setTopics(topics);
 
         return course;

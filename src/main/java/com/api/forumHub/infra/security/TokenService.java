@@ -52,27 +52,6 @@ public class TokenService {
         }
     }
 
-//    public String getSubjectt(String token){
-//        if (token == null){
-//            throw new RuntimeException();
-//        }
-//        DecodedJWT verifier = null;
-//        try{
-//            Algorithm algorithm = Algorithm.HMAC256(secret);
-//            verifier = JWT.require(algorithm)
-//                    .withIssuer("ForumHub API")
-//                    .build()
-//                    .verify(token);
-//
-//            verifier.getSubject();
-//        } catch (JWTVerificationException exception){
-//            throw new JWTVerificationException("Invalid or expired JWT token");
-//        }
-//        if (verifier.getSubject() == null) {
-//            throw new RuntimeException("Verifier null");
-//        } else
-//            return verifier.getSubject();
-//    }
 
     private Instant generateCreationData() {
         return LocalDateTime.now(ZoneId.of("GMT-3")).toInstant(ZoneOffset.of("-03:00"));

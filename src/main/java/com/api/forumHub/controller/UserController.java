@@ -30,7 +30,6 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-    //Permitir criação de ROLE_ADMIN apenas com outro endpoint restrito (ex: /admin/users).
 
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")

@@ -1,5 +1,6 @@
 package com.api.forumHub.domain.course;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,10 +21,15 @@ public class CourseService {
         return CourseMapper.toDto(course);
     }
 
-    public CourseDTO getCourseName(String name) {
-        Course course = courseRepository.findByName(name);
+    public List<CourseDTO> getCourseName(String name) {
+        List<Course> courses = courseRepository.findByNameContainingIgnoreCase(name);
 
-        return course != null ? CourseMapper.toDto(course) : null;
+        if (courses.isEmpty()) {
+            throw new EntityNotFoundException("No courses found with the name: " + name);
+        }
+
+        return courses.stream().map(CourseMapper::toDto)
+                .toList();
     }
 
     public List<CourseDTO> getCourses() {

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -113,8 +114,10 @@ public class TopicsController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteTopic(@PathVariable Long id){
-        topicService.deleteTopic(id);
+    public ResponseEntity<Void> deleteTopic(@PathVariable Long id, Authentication authentication){
+
+        String authenticatedUserEmail = authentication.getName();
+        topicService.deleteTopic(id, authenticatedUserEmail);
         return ResponseEntity.noContent().build();
     }
 }

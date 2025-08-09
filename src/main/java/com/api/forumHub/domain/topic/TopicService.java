@@ -6,6 +6,7 @@ import com.api.forumHub.domain.answer.AnswerMapper;
 import com.api.forumHub.domain.answer.AnswerService;
 import com.api.forumHub.domain.course.Course;
 import com.api.forumHub.domain.course.CourseRepository;
+import com.api.forumHub.domain.user.Role;
 import com.api.forumHub.domain.user.User;
 import com.api.forumHub.domain.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +14,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -148,11 +150,19 @@ public class TopicService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteTopic(Long id) {
-        if (!topicRepository.existsById(id)) {
-            throw new EntityNotFoundException("Topic not found!");
+    public void deleteTopic(Long id, String authenticatedUserEmail) {
+
+        Topic topic = findTopic(id);
+
+        User user = authenticatedUser(authenticatedUserEmail);
+
+        boolean isAuthor = topic.getAuthor().getId().equals(user.getId());
+        boolean isAdmin = user.getRole() == Role.ROLE_ADMIN;
+
+        if (!isAuthor && !isAdmin) {
+            throw new AccessDeniedException("User not have permission to delete this topic");
         }
-        topicRepository.deleteById(id);
+        topicRepository.delete(topic);
     }
 
     private Topic findTopic(Long id) {

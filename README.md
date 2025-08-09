@@ -1,13 +1,15 @@
 <h1 align="center">🧠 Fórum Hub API</h1>
 
-![Java](https://img.shields.io/badge/Java-17+-red?style=for-the-badge&logo=java)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-2.7-green?style=for-the-badge&logo=springboot)
+![Java](https://img.shields.io/badge/Java-21-red?style=for-the-badge&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-green?style=for-the-badge&logo=springboot)
 ![Maven](https://img.shields.io/badge/Maven-3.8-blue?style=for-the-badge&logo=apachemaven)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
+![MySQL](https://img.shields.io/badge/Migrations-Flyway-red?style=for-the-badge&logo=mysql)
 ![JWT](https://img.shields.io/badge/JWT-Security-orange?style=for-the-badge&logo=jsonwebtokens)
 ![Lombok](https://img.shields.io/badge/Lombok-enabled-yellow?style=for-the-badge&logo=lombok)
+![License](https://img.shields.io/badge/License-Apache2.0-gree?style=for-the-badge&logo=lombok)
 
-- API RESTful desenvolvida em Java com Spring Boot para gerenciamento de tópicos e respostas em um fórum de discussão.
+- O ForumHub é uma API RESTful desenvolvida em Java com Spring Boot para gerenciamento de cursos, tópicos, respostas e usuários em um fórum de discussão.
 
 [📚 Tecnologias Utilizadas](#-tecnologias-utilizadas) - [🛠️ Funcionalidades](#-funcionalidades) - [🔐 Segurança](#-segurança) - [🔎 Endpoints](#-endpoints) - [⚙️ Como rodar o projeto localmente](#-como-rodar-o-projeto-localmente) - [🧪 Testes](#-testes) - [👩‍💻 Autora](#-autora)
 
@@ -79,13 +81,14 @@
 
 # 🧾 Licença
 
-Apache 2.0
+[Apache 2.0](https://github.com/Danimmota/forum-hub-challenge/blob/main/LICENSE.txt)
+
 
 ---
 
 ## 👩‍💻 Autora
 
-Desenvolvido por Daniela Medeiro Mota em realização do Challenge: ForumHub ONE - Oracle Next Education
+Desenvolvido por Daniela Medeiro Mota em realização do Challenge: ForumHub ONE - Oracle Next Education + ALURA
 
 📧 Email: danielamedeiromota@hotmail.com
 

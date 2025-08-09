@@ -18,7 +18,5 @@ public record TopicResponseDTO(
         List<AnswerDTO> answers
         ) {
 
-
-//    public static Page<TopicDTO> convert(Page<Topic> topics) {return topics.map(TopicDTO::new);}
 }
 
