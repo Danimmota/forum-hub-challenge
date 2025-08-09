@@ -32,7 +32,7 @@ public class AnswerService {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthenticated user.");
         }
-
+        //refatorar fazer um answer request // verificar campo de localdate
         Answer answer = new Answer();
         answer.setMessage(dto.message());
         answer.setCreationDate(LocalDateTime.now());
@@ -48,7 +48,7 @@ public class AnswerService {
         List<Answer> answers = answerRepository.findByTopicIdOrderByCreationDateDesc(topicId);
         return answers.stream().map(AnswerMapper::toDto).toList();
     }
-
+    // implementar paginação na lista de respostas
     public List<AnswerDTO> listAnswers() {
         return answerRepository.findAll().stream()
                 .map(AnswerMapper::toDto)

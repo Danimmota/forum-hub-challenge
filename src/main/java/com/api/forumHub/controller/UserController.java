@@ -33,9 +33,13 @@ public class UserController {
 
     @PostMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDTO> createAdmin(@RequestBody @Valid UserRequest request) {
+    @Transactional
+    public ResponseEntity<UserResponseDTO> createAdmin(@RequestBody @Valid UserRequest request, UriComponentsBuilder uriBuilder) {
         UserResponseDTO newAdmin = userService.createAdminUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newAdmin);
+
+        URI uri = uriBuilder.path("/user/{id}").buildAndExpand(newAdmin.id()).toUri();
+
+        return ResponseEntity.created(uri).body(newAdmin);
     }
 
     @PostMapping
@@ -52,7 +56,7 @@ public class UserController {
     public ResponseEntity<?> getUser(@PathVariable Long id) {
         UserDetailResponse response = userService.getUser(id);
         if(response == null) {
-            return new ResponseEntity<>("User not found!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(response);
     }

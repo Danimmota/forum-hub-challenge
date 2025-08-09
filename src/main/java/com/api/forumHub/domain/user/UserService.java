@@ -24,12 +24,12 @@ public class UserService {
     }
 
     public UserResponseDTO createAdminUser(UserRequest request) {
-        User newAdmin = new User(
-                request.name(),
-                request.email(),
-                passwordEncoder.encode(request.password()),
-                Role.ROLE_ADMIN
-        );
+        User newAdmin = new User();
+        newAdmin.setName(request.name());
+        newAdmin.setEmail(request.email());
+        newAdmin.setPassword(passwordEncoder.encode(request.password()));
+        newAdmin.setRole(Role.ROLE_ADMIN);
+
         userRepository.save(newAdmin);
         return UserMapper.toDto(newAdmin);
     }

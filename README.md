@@ -4,10 +4,10 @@
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-green?style=for-the-badge&logo=springboot)
 ![Maven](https://img.shields.io/badge/Maven-3.8-blue?style=for-the-badge&logo=apachemaven)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
-![MySQL](https://img.shields.io/badge/Migrations-Flyway-red?style=for-the-badge&logo=mysql)
+![Flyway](https://img.shields.io/badge/Migrations-Flyway-red?style=for-the-badge&logo=flyway)
 ![JWT](https://img.shields.io/badge/JWT-Security-orange?style=for-the-badge&logo=jsonwebtokens)
 ![Lombok](https://img.shields.io/badge/Lombok-enabled-yellow?style=for-the-badge&logo=lombok)
-![License](https://img.shields.io/badge/License-Apache2.0-gree?style=for-the-badge&logo=lombok)
+![License](https://img.shields.io/badge/License-Apache2.0-gree?style=for-the-badge&logo=apache)
 
 - O ForumHub é uma API RESTful desenvolvida em Java com Spring Boot para gerenciamento de cursos, tópicos, respostas e usuários em um fórum de discussão.
 
