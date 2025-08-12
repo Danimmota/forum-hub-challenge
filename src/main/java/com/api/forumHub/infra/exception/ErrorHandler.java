@@ -9,38 +9,59 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ErrorHandler {
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
+        return ResponseEntity
+                .status(ex.getStatusCode())
+                .body(new ErrorResponse(ex.getReason(), ex.getStatusCode().value()));
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity handleErro400(HttpMessageNotReadableException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleErro400(HttpMessageNotReadableException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("Invalid request body", 400));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity handleErro404() {
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<ErrorResponse> handleErro404() {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("Resource not found", 404));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity handleErroBadCredentials() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+    public ResponseEntity<ErrorResponse> handleErroBadCredentials() {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("Invalid credentials", 401));
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity handleErroAuthentication() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação");
+    public ResponseEntity<ErrorResponse> handleErroAuthentication() {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("User authentication failed", 401));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity handleErroAcessoNegado() {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
+    public ResponseEntity<ErrorResponse> handleErroAccessDenied() {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("Users denied access", 403));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleErro500(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " +ex.getLocalizedMessage());
+    public ResponseEntity<ErrorResponse> handleErro500(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponse(ex.getLocalizedMessage(), 500));
     }
 
+    private record ErrorResponse (String message, int statusCode) { }
 }

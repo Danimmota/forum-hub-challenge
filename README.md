@@ -99,7 +99,7 @@
     Exemplo de entrada: 
     {
         "email": "maria@email.com",
-        "password": "D1"
+        "password": "D1456&eT"
      }
     ```
     ```
