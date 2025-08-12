@@ -29,6 +29,7 @@ public class TopicsController {
     private final TopicService topicService;
 
     public TopicsController(TopicService topicService) {
+
         this.topicService = topicService;
     }
 
@@ -64,8 +65,7 @@ public class TopicsController {
             @PathVariable Long id,
             @RequestBody @Valid TopicUpdateRequest request) {
 
-        TopicResponseDTO responseDTO = topicService.updateTopic(id, request);
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(topicService.updateTopic(id, request));
     }
 
     @PutMapping("/{topicId}")
@@ -73,8 +73,7 @@ public class TopicsController {
             @PathVariable Long topicId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        TopicResponseDTO responseDTO = topicService.updateStatusTopic(topicId, userDetails.getUsername());
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(topicService.updateStatusTopic(topicId, userDetails.getUsername()));
     }
 
     @GetMapping("/{id}")
@@ -106,9 +105,8 @@ public class TopicsController {
 
     @GetMapping("/term") //GET /topics/search?term=java
     public ResponseEntity<List<TopicResponseDTO>> getTopicsByTermInTitle(@RequestParam String term) {
-        List<TopicResponseDTO> topics = topicService.getTopicsByTermTitle(term);
 
-        return ResponseEntity.ok(topics);
+        return ResponseEntity.ok(topicService.getTopicsByTermTitle(term));
     }
 
     @DeleteMapping("/{id}")

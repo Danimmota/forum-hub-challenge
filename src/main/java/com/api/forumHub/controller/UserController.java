@@ -53,12 +53,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id) {
-        UserDetailResponse response = userService.getUser(id);
-        if(response == null) {
-            return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(response);
+    public ResponseEntity<UserDetailResponse> getUser(@PathVariable Long id) {
+
+        return ResponseEntity.ok(userService.getUser(id));
     }
 
     @GetMapping

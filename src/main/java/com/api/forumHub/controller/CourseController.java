@@ -34,14 +34,12 @@ public class CourseController {
 
     @GetMapping("/search")
     public ResponseEntity<List<CourseDTO>> getCourseName(@RequestParam String name) {
-        List<CourseDTO> course = courseService.getCourseName(name);
-        return ResponseEntity.ok(course);
+        return ResponseEntity.ok(courseService.getCourseName(name));
     }
 
     @GetMapping
     public ResponseEntity<List<CourseDTO>> getCourses() {
-        List<CourseDTO> courseDTOS = courseService.getCourses();
-        return ResponseEntity.ok(courseDTOS);
+        return ResponseEntity.ok(courseService.getCourses());
     }
 
     @DeleteMapping("/{id}")

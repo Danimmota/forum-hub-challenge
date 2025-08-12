@@ -1,5 +1,6 @@
 package com.api.forumHub.domain.user;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,6 @@ public class UserService {
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public Page<UserResponseDTO> listUsers (Pageable pageable) {
-        return userRepository.findAll(pageable)
-                .map(UserMapper::toDto);
     }
 
     public UserResponseDTO createAdminUser(UserRequest request) {
@@ -42,16 +38,23 @@ public class UserService {
         return UserMapper.toDto(newUser) ;
     }
 
+    public Page<UserResponseDTO> listUsers (Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(UserMapper::toDto);
+    }
+
     public UserDetailResponse getUser(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-         return user != null ? UserMapper.toDetailDto(user) : null;
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found!"));
+
+         return UserMapper.toDetailDto(user);
     }
 
     public void deleteUser(Long id) {
         userRepository.findById(id)
                 .ifPresentOrElse(
                         userRepository::delete,
-                        () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by id.");
+                        () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by id." + id);
                         }
                 );
     }

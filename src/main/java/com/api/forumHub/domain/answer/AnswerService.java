@@ -27,6 +27,7 @@ public class AnswerService {
     }
 
     public AnswerResponseDTO createAnswer(AnswerRequest request, String authenticatedUserEmail) {
+
         Topic topic = topicRepository.findById(request.topic())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found!"));
 
@@ -64,19 +65,16 @@ public class AnswerService {
         User user = authenticatedUser(authenticatedUserEmail);
 
         Answer answer = answerRepository.findById(answerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Answer not found by id: " + answerId));
 
         boolean isAuthor = answer.getAuthor().getId().equals(user.getId());
         boolean isAdmin = user.getRole().equals(Role.ROLE_ADMIN);
 
         if (!isAuthor && !isAdmin) {
-            throw new AccessDeniedException("User does not have permission to perform this action on this topic");
+            throw new AccessDeniedException("User does not have permission to perform this action on this answer");
         }
 
-        answerRepository.findById(answerId).ifPresentOrElse(
-                answerRepository::delete,
-                () -> {throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Answer not found by id: " + answerId); }
-        );
+        answerRepository.deleteById(answerId);
     }
 
     private User authenticatedUser(String authenticatedUserEmail) {
