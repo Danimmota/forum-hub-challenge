@@ -1,6 +1,6 @@
 package com.api.forumHub.domain.topic;
 
-import com.api.forumHub.domain.answer.AnswerDTO;
+import com.api.forumHub.domain.answer.AnswerResponseDTO;
 import com.api.forumHub.domain.course.CourseDTO;
 import com.api.forumHub.domain.user.UserResponseDTO;
 
@@ -15,7 +15,7 @@ public record TopicResponseDTO(
         TopicStatus status,
         CourseDTO course,
         UserResponseDTO author,
-        List<AnswerDTO> answers
+        List<AnswerResponseDTO> answers
         ) {
 
 }

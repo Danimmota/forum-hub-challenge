@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/login")
-public class AutenticacaoController {
+public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    public AutenticacaoController(AuthenticationManager authenticationManager, TokenService tokenService) {
+    public AuthenticationController(AuthenticationManager authenticationManager, TokenService tokenService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }

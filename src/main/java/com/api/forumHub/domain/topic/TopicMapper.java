@@ -18,7 +18,7 @@ public class TopicMapper {
         Course course = new Course();
         course.setId(request.course());
 
-        topic.setAuthor(request.author());
+        topic.setAuthor(UserMapper.toUserDtoEntity(request.author()));
 
         return topic;
     }
@@ -34,5 +34,4 @@ public class TopicMapper {
                 UserMapper.toDto(topic.getAuthor()),
                 topic.getAnswers().stream().map(AnswerMapper::toDto).toList());
     }
-
 }

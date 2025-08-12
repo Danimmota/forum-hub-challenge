@@ -1,20 +1,15 @@
 package com.api.forumHub.domain.topic;
 
-import com.api.forumHub.domain.answer.Answer;
-import com.api.forumHub.domain.answer.AnswerDTO;
-import com.api.forumHub.domain.answer.AnswerMapper;
-import com.api.forumHub.domain.answer.AnswerService;
+import com.api.forumHub.domain.answer.*;
 import com.api.forumHub.domain.course.Course;
 import com.api.forumHub.domain.course.CourseRepository;
-import com.api.forumHub.domain.user.Role;
+import com.api.forumHub.domain.topic.validation.TopicValidator;
 import com.api.forumHub.domain.user.User;
 import com.api.forumHub.domain.user.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -30,11 +25,14 @@ public class TopicService {
     private final CourseRepository courseRepository;
     private final AnswerService answerService;
 
-    public TopicService(TopicRepository topicRepository, UserRepository userRepository, CourseRepository courseRepository, AnswerService answerService) {
+    private final List<TopicValidator> validators;
+
+    public TopicService(TopicRepository topicRepository, UserRepository userRepository, CourseRepository courseRepository, AnswerService answerService, List<TopicValidator> validadores) {
         this.topicRepository = topicRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.answerService = answerService;
+        this.validators = validadores;
     }
 
 
@@ -58,25 +56,23 @@ public class TopicService {
         return TopicMapper.toResponseDto(newTopic);
     }
 
-    public AnswerDTO replyTopic(Long topicId, AnswerDTO answerDTO, String authenticatedUserEmail) {
+    public AnswerResponseDTO replyTopic(Long topicId, AnswerRequest request, String authenticatedUserEmail) {
 
         Topic topic = findTopic(topicId);
 
-        if(topic.isClosed()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The topic is already marked as resolved.");
-        }
+        validators.forEach(v -> v.validate(topicId));
 
         User user = authenticatedUser(authenticatedUserEmail);
 
         Answer answer = new Answer();
-        answer.setMessage(answerDTO.message());
-        answer.setCreationDate(LocalDateTime.now());
+        answer.setMessage(request.message());
+//        answer.setCreationDate(LocalDateTime.now());
         answer.setAuthor(user);
         answer.setTopic(topic);
 
-        AnswerDTO newResponse = AnswerMapper.toDto(answer);
+        AnswerResponseDTO newResponse = AnswerMapper.toDto(answer);
 
-        answerService.createAnswer(newResponse, authenticatedUserEmail);
+        answerService.createAnswer(request, authenticatedUserEmail);
 
         return newResponse;
     }
@@ -98,19 +94,11 @@ public class TopicService {
     }
 
     @Transactional
-    public TopicResponseDTO updateTopic (Long id, TopicUpdateRequest request, String authenticatedUserEmail) {
+    public TopicResponseDTO updateTopic (Long topicId, TopicUpdateRequest request) {
 
-        Topic newTopic = findTopic(id);
+        Topic newTopic = findTopic(topicId);
 
-        User user = authenticatedUser(authenticatedUserEmail);
-
-        if(!newTopic.getAuthor().getEmail().equals(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User without permission to edit this topic!");
-        }
-
-        if(newTopic.isClosed()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The topic is already marked as resolved.");
-        }
+        validators.forEach(v -> v.validate(topicId));
 
         newTopic.setTitle(request.title());
         newTopic.setMessage(request.message());
@@ -150,19 +138,11 @@ public class TopicService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteTopic(Long id, String authenticatedUserEmail) {
+    public void deleteTopic(Long topicId) {
 
-        Topic topic = findTopic(id);
+        validators.forEach(v -> v.validate(topicId));
 
-        User user = authenticatedUser(authenticatedUserEmail);
-
-        boolean isAuthor = topic.getAuthor().getId().equals(user.getId());
-        boolean isAdmin = user.getRole() == Role.ROLE_ADMIN;
-
-        if (!isAuthor && !isAdmin) {
-            throw new AccessDeniedException("User not have permission to delete this topic");
-        }
-        topicRepository.delete(topic);
+        topicRepository.deleteById(topicId);
     }
 
     private Topic findTopic(Long id) {

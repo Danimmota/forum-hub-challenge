@@ -1,6 +1,7 @@
 package com.api.forumHub.controller;
 
-import com.api.forumHub.domain.answer.AnswerDTO;
+import com.api.forumHub.domain.answer.AnswerRequest;
+import com.api.forumHub.domain.answer.AnswerResponseDTO;
 import com.api.forumHub.domain.topic.TopicRequest;
 import com.api.forumHub.domain.topic.TopicResponseDTO;
 import com.api.forumHub.domain.topic.TopicService;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -47,29 +47,28 @@ public class TopicsController {
 
     @PostMapping("/{topicId}/answers")
     @Transactional
-    public ResponseEntity<AnswerDTO> replyTopic(
+    public ResponseEntity<AnswerResponseDTO> replyTopic(
             @PathVariable Long topicId,
-            @RequestBody @Valid AnswerDTO answer,
+            @RequestBody @Valid AnswerRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        AnswerDTO responseAnswer = topicService.replyTopic(topicId, answer, userDetails.getUsername());
+        AnswerResponseDTO responseAnswer = topicService.replyTopic(topicId, request, userDetails.getUsername());
 
         URI uri = URI.create("/topics/" + topicId +"/answers/" + responseAnswer.id());
 
         return ResponseEntity.created(uri).body(responseAnswer);
     }
 
-    @PutMapping("/topics/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<TopicResponseDTO> updateTopic(
             @PathVariable Long id,
-            @RequestBody @Valid TopicUpdateRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody @Valid TopicUpdateRequest request) {
 
-        TopicResponseDTO responseDTO = topicService.updateTopic(id, request, userDetails.getUsername());
+        TopicResponseDTO responseDTO = topicService.updateTopic(id, request);
         return ResponseEntity.ok(responseDTO);
     }
 
-    @PutMapping("/topics/{topicId}")
+    @PutMapping("/{topicId}")
     public ResponseEntity<TopicResponseDTO> updateStatusTopic(
             @PathVariable Long topicId,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -114,10 +113,9 @@ public class TopicsController {
 
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Void> deleteTopic(@PathVariable Long id, Authentication authentication){
+    public ResponseEntity<Void> deleteTopic(@PathVariable Long id){
 
-        String authenticatedUserEmail = authentication.getName();
-        topicService.deleteTopic(id, authenticatedUserEmail);
+        topicService.deleteTopic(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -4,12 +4,8 @@ import com.api.forumHub.domain.user.UserResponseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
-public record AnswerDTO (
-        Long id,
+public record AnswerRequest(
         @NotBlank(message = "Mensagem é obrigatória") String message,
-        LocalDateTime creationDate,
         @NotNull UserResponseDTO author,
         @NotNull Long topic) {
 }

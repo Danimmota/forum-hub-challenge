@@ -1,8 +1,8 @@
 package com.api.forumHub.domain.course;
 
 import com.api.forumHub.domain.answer.Answer;
-import com.api.forumHub.domain.answer.AnswerDTO;
 import com.api.forumHub.domain.answer.AnswerMapper;
+import com.api.forumHub.domain.answer.AnswerResponseDTO;
 import com.api.forumHub.domain.topic.Topic;
 import com.api.forumHub.domain.topic.TopicResponseDTO;
 import com.api.forumHub.domain.user.UserMapper;
@@ -28,10 +28,8 @@ public class CourseMapper {
             topic.setCourse(course);
             topic.setAuthor(UserMapper.toUserDtoEntity(t.author()));
 
-            List<Answer> answers = (t.answers() == null ? List.<AnswerDTO>of() : t.answers())
-                    .stream().map(
-                    answerDTO -> AnswerMapper.toEntity(answerDTO)
-            ).toList();
+            List<Answer> answers = (t.answers() == null ? List.<AnswerResponseDTO>of() : t.answers())
+                    .stream().map(AnswerMapper::fromResponseDto).toList();
 
             topic.setAnswers(answers);
 
@@ -45,7 +43,7 @@ public class CourseMapper {
 
     public static CourseDTO toDto(Course course) {
         List<TopicResponseDTO> topicDTOs = course.getTopics().stream().map(t -> {
-            List<AnswerDTO> answerDTOs = t.getAnswers().stream()
+            List<AnswerResponseDTO> answerDTOs = t.getAnswers().stream()
                     .map(AnswerMapper::toDto)
                     .toList();
             return new TopicResponseDTO(

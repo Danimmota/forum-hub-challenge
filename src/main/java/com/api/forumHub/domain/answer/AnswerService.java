@@ -2,9 +2,11 @@ package com.api.forumHub.domain.answer;
 
 import com.api.forumHub.domain.topic.Topic;
 import com.api.forumHub.domain.topic.TopicRepository;
+import com.api.forumHub.domain.user.Role;
 import com.api.forumHub.domain.user.User;
 import com.api.forumHub.domain.user.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,17 +26,14 @@ public class AnswerService {
         this.userRepository = userRepository;
     }
 
-    public AnswerDTO createAnswer(AnswerDTO dto, String authenticatedUserEmail) {
-        Topic topic = topicRepository.findById(dto.topic())
+    public AnswerResponseDTO createAnswer(AnswerRequest request, String authenticatedUserEmail) {
+        Topic topic = topicRepository.findById(request.topic())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found!"));
 
-        User user = userRepository.findEntityByEmail(authenticatedUserEmail);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthenticated user.");
-        }
-        //refatorar fazer um answer request // verificar campo de localdate
+        User user = authenticatedUser(authenticatedUserEmail);
+
         Answer answer = new Answer();
-        answer.setMessage(dto.message());
+        answer.setMessage(request.message());
         answer.setCreationDate(LocalDateTime.now());
         answer.setAuthor(user);
         answer.setTopic(topic);
@@ -44,19 +43,47 @@ public class AnswerService {
         return AnswerMapper.toDto(answer);
     }
 
-    public List<AnswerDTO> listAnswersByTopicOrderByDate(Long topicId) {
+    public List<AnswerResponseDTO> listAnswersByTopicOrderByDate(Long topicId) {
         List<Answer> answers = answerRepository.findByTopicIdOrderByCreationDateDesc(topicId);
         return answers.stream().map(AnswerMapper::toDto).toList();
     }
-    // implementar paginação na lista de respostas
-    public List<AnswerDTO> listAnswers() {
+
+    public List<AnswerResponseDTO> listAnswers() {
         return answerRepository.findAll().stream()
                 .map(AnswerMapper::toDto)
                 .toList();
     }
 
-    public List<AnswerDTO> listAnswersByAuthor(Long authorId) {
+    public List<AnswerResponseDTO> listAnswersByAuthor(Long authorId) {
         List<Answer> answers = answerRepository.findAnswerByAuthor(authorId);
         return answers.stream().map(AnswerMapper::toDto).toList();
+    }
+
+    public void deleteAnswer(Long answerId, String authenticatedUserEmail) {
+
+        User user = authenticatedUser(authenticatedUserEmail);
+
+        Answer answer = answerRepository.findById(answerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
+
+        boolean isAuthor = answer.getAuthor().getId().equals(user.getId());
+        boolean isAdmin = user.getRole().equals(Role.ROLE_ADMIN);
+
+        if (!isAuthor && !isAdmin) {
+            throw new AccessDeniedException("User does not have permission to perform this action on this topic");
+        }
+
+        answerRepository.findById(answerId).ifPresentOrElse(
+                answerRepository::delete,
+                () -> {throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Answer not found by id: " + answerId); }
+        );
+    }
+
+    private User authenticatedUser(String authenticatedUserEmail) {
+        User user = userRepository.findEntityByEmail(authenticatedUserEmail);
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthenticated user.");
+        }
+        return user;
     }
 }

@@ -11,7 +11,7 @@
 
 - O ForumHub é uma API RESTful desenvolvida em Java com Spring Boot para gerenciamento de cursos, tópicos, respostas e usuários em um fórum de discussão.
 
-[📚 Tecnologias Utilizadas](#-tecnologias-utilizadas) - [🛠️ Funcionalidades](#-funcionalidades) - [🔐 Segurança](#-segurança) - [🔎 Endpoints](#-endpoints) - [⚙️ Como rodar o projeto localmente](#-como-rodar-o-projeto-localmente) - [🧪 Testes](#-testes) - [👩‍💻 Autora](#-autora)
+[📚 Tecnologias Utilizadas](#-tecnologias-utilizadas) - [🛠️ Funcionalidades](#-funcionalidades) - [🔐 Segurança](#-segurança) - [🔎 Endpoints](#-endpoints) - [⚙️ Como rodar o projeto localmente](#-como-rodar-o-projeto-localmente) - [📄 Documentação](#-documentação) - [🧪 Testes](#-testes) - [👩‍💻 Autora](#-autora)
 
 ---
 
@@ -26,7 +26,7 @@
 - Bean Validation
 - Flyway para criação do banco de dados
 - MySQL
-- Testes automatizados:
+- Testes unitários:
   - JUnit 5
   - Mockito
 - Lombok
@@ -44,11 +44,11 @@
     - Apenas `USER` autenticado podem criar novos tópicos
     - Apenas o autor pode editar um tópico
     - Apenas o autor pode atualizar o STATUS de um tópico como SOLUCIONADO
-    - Tópicos SOLUCIONADOS não podem ser editados nem receber novas respostas
+    - Tópicos SOLUCIONADOS não podem ser editados nem receber novas respostas - Validado
     - Filtragem de tópicos por data de criação (mais recentes primeiro)
     - Filtragem por termo no título (case-insensitive)
     - Listagem de topicos por nome do curso ou autor
-    - Somente o autor e `ADMIN` podem deletar um tópico
+    - Somente o autor e `ADMIN` podem deletar um tópico - Validado
   - ✅ **Respostas**: 
     - Apenas `USER` autenticado pode responder um tópico
     - Listagem de respostas por tópico ou autor
@@ -62,27 +62,107 @@
 
 - JWT Token para autenticação e autorização
 - Controle de acesso com `ROLE_USER` e `ROLE_ADMIN`
-- Filtros configurados para proteger endpoints 
+- Filtros configurados para proteger endpoints
+- Validação das senhas utilizando Bean Validation com expressão regular (regex) para garantir:
+  - Mínimo de 8 caracteres 
+  - Pelo menos 1 letra maiúscula 
+  - Pelo menos 1 número 
+  - Pelo menos 1 caractere especial
 
 ---
 ## 🔎 Endpoints
 
+- Topicos
+  - topics-controller
+    - POST /topics
+    - POST /topics/{topicId}/answers
+    - PUT /topics/{topicId}
+    - PUT /topics/{id}
+    - GET /topics
+    - GET /topics/{id}
+    - GET /topics/{authorId}
+    - GET /topics/term
+    - GET /topics/search
+    - DELETE /topics/{id}
+- Usuários
+  - user-controller
+    - POST /users
+    - POST /users/admin
+    - GET /users
+    - GET /users/{id}
+    - DELETE /users/{id}
+- Autenticação
+  - authentication-controller
+    - POST /login
+      - **Payload**
+    ```
+    Exemplo de entrada: 
+    {
+        "email": "maria@email.com",
+        "password": "D1"
+     }
+    ```
+    ```
+    Exemplo de saída 
+    Response body:
+    {
+        "JWTtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJGb3J1bUh1YiBBUEkiLCJzdWIiOiJqb2FuYUBlbWFpbC5jb20iLCJpZCI6NCwiaWF0IjoxNzU0OTU4NzQ1LCJleHAiOjE3NTQ5NjU5NDV9.ylmxPQgrI7W6_d2im_rNHrauDfb_cVeLtUT4IdmaQ5g"
+    }
+    ```
+- Cursos
+  - course-controller
+    - POST /courses
+    - GET /courses
+    - GET /courses/search
+    - DELETE/courses/{id}
+- Respostas
+  - answer-controller
+    - POST /answers
+    - GET /answers
+    - GET /answers/{topicId}
+    - GET /answers/{authorId}
 
 ---
 
 ## ⚙️ Como rodar o projeto localmente
 
+### 1. Clone o repositório
+``` bash
+
+git clone https://github.com/Danimmota/forum-hub-challenge.git
+```
+- Vá na pasta em que clonou e abra o Git Bash
+- 
+### 2. Configure o banco de dados
+- Crie um banco de dados no MYSQL Workbench com o nome `forum_hub` com o scrip: 
+```
+CREATE DATABASE forum_hub
+```
+- Após atualize as configurações no `aplication.properties`:
+```
+server.port=8081
+
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://localhost:3306/forum_hub
+spring.datasource.username=root
+spring.datasource.password=${MYSQL_PASSWORD}
+api.security.token.secret=${JWT_TOKEN}
+```
+
 ---
 
 ## 🧪 Testes
 
-- Testes unitários e de integração
+- Testes unitários
 ---
+## 📄 Documentação
 
+ - Acesse o link após start da aplicação: http://localhost:8081/swagger-ui/index.html#/
+
+---
 # 🧾 Licença
 
 [Apache 2.0](https://github.com/Danimmota/forum-hub-challenge/blob/main/LICENSE.txt)
-
 
 ---
 

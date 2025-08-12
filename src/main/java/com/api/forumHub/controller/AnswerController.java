@@ -1,6 +1,7 @@
 package com.api.forumHub.controller;
 
-import com.api.forumHub.domain.answer.AnswerDTO;
+import com.api.forumHub.domain.answer.AnswerRequest;
+import com.api.forumHub.domain.answer.AnswerResponseDTO;
 import com.api.forumHub.domain.answer.AnswerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -26,30 +27,36 @@ public class AnswerController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<AnswerDTO> createAnswer(
-            @RequestBody @Valid AnswerDTO answerDTO,
+    public ResponseEntity<AnswerResponseDTO> createAnswer(
+            @RequestBody @Valid AnswerRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        AnswerDTO responseAnswer = answerService.createAnswer(answerDTO, userDetails.getUsername());
+        AnswerResponseDTO responseAnswer = answerService.createAnswer(request, userDetails.getUsername());
 
         URI uri = URI.create("/answers/" + responseAnswer.id());
 
         return ResponseEntity.created(uri).body(responseAnswer);
     }
 
-    @GetMapping("/answers/{topicId}")
-    public ResponseEntity<List<AnswerDTO>> listAnswersByTopicOrderByDate(@PathVariable Long topicId) {
-        List<AnswerDTO> answers = answerService.listAnswersByTopicOrderByDate(topicId);
+    @GetMapping("/{topicId}")
+    public ResponseEntity<List<AnswerResponseDTO>> listAnswersByTopicOrderByDate(@PathVariable Long topicId) {
+        List<AnswerResponseDTO> answers = answerService.listAnswersByTopicOrderByDate(topicId);
         return ResponseEntity.ok(answers);
     }
 
     @GetMapping
-    public ResponseEntity<List<AnswerDTO>> listAnswers(){
+    public ResponseEntity<List<AnswerResponseDTO>> listAnswers(){
         return ResponseEntity.ok(answerService.listAnswers());
     }
 
-    @GetMapping("/answers/{authorId}")
-    public ResponseEntity<List<AnswerDTO>> listAnswerByAuthor(@PathVariable Long authorId) {
+    @GetMapping("/{authorId}")
+    public ResponseEntity<List<AnswerResponseDTO>> listAnswerByAuthor(@PathVariable Long authorId) {
         return ResponseEntity.ok(answerService.listAnswersByAuthor(authorId));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> deleteAnswer (@PathVariable Long answerId, @AuthenticationPrincipal UserDetails userDetails) {
+        answerService.deleteAnswer(answerId, userDetails.getUsername());
+        return ResponseEntity.noContent().build();
     }
 }
