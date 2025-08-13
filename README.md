@@ -11,7 +11,7 @@
 
 - O ForumHub é uma API RESTful desenvolvida em Java com Spring Boot para gerenciamento de cursos, tópicos, respostas e usuários em um fórum de discussão.
 
-[📚 Tecnologias Utilizadas](#-tecnologias-utilizadas) - [🛠️ Funcionalidades](#-funcionalidades) - [🔐 Segurança](#-segurança) - [🔎 Endpoints](#-endpoints) - [⚙️ Como rodar o projeto localmente](#-como-rodar-o-projeto-localmente) - [📄 Documentação](#-documentação) - [🧪 Testes](#-testes) - [👩‍💻 Autora](#-autora)
+[📚 Tecnologias Utilizadas](#-tecnologias-utilizadas) - [🛠️ Funcionalidades](#-funcionalidades) - [🔐 Segurança](#-segurança) - [🔎 Endpoints](#-endpoints) - [⚙️ Como rodar o projeto localmente](#-como-rodar-o-projeto-localmente) - [🧪 Testes](#-testes) - [📄 Documentação](#-documentação) - [🧾 Licença](#-licença) - [👩‍💻 Autora](#-autora)
 
 ---
 
@@ -221,13 +221,14 @@ api.security.token.secret=${JWT_TOKEN}
     - Criação de tópico Cenario 02 ✅
     - Responder há um tópico ✅
 ---
+
 ## 📄 Documentação
-- 
+
 - Swagger
   - Acesse o link após start da aplicação: http://localhost:8081/swagger-ui/index.html#/
 
 ---
-# 🧾 Licença
+## 🧾 Licença
 
 [Apache 2.0](https://github.com/Danimmota/forum-hub-challenge/blob/main/LICENSE.txt)
 
