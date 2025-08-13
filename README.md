@@ -215,6 +215,10 @@ api.security.token.secret=${JWT_TOKEN}
 ## 🧪 Testes
 
 - Testes unitários
+  - TopicsControllerTest
+    - Criação de tópico Cenario 01 ✅
+    - Criação de tópico Cenario 02 ✅
+    - Responder há um tópico ✅
 ---
 ## 📄 Documentação
 
