@@ -52,7 +52,6 @@ public class TokenService {
         }
     }
 
-
     private Instant generateCreationData() {
         return LocalDateTime.now(ZoneId.of("GMT-3")).toInstant(ZoneOffset.of("-03:00"));
     }

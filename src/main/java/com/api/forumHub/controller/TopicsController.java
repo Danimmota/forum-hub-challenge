@@ -2,10 +2,7 @@ package com.api.forumHub.controller;
 
 import com.api.forumHub.domain.answer.AnswerRequest;
 import com.api.forumHub.domain.answer.AnswerResponseDTO;
-import com.api.forumHub.domain.topic.TopicRequest;
-import com.api.forumHub.domain.topic.TopicResponseDTO;
-import com.api.forumHub.domain.topic.TopicService;
-import com.api.forumHub.domain.topic.TopicUpdateRequest;
+import com.api.forumHub.domain.topic.*;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,7 +31,6 @@ public class TopicsController {
     }
 
     @PostMapping
-    @Transactional
     public ResponseEntity<TopicResponseDTO> createTopic(
             @RequestBody @Valid TopicRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -47,7 +43,6 @@ public class TopicsController {
     }
 
     @PostMapping("/{topicId}/answers")
-    @Transactional
     public ResponseEntity<AnswerResponseDTO> replyTopic(
             @PathVariable Long topicId,
             @RequestBody @Valid AnswerRequest request,
@@ -68,12 +63,12 @@ public class TopicsController {
         return ResponseEntity.ok(topicService.updateTopic(id, request));
     }
 
-    @PutMapping("/{topicId}")
+    @PutMapping("/topic/{topicId}")
     public ResponseEntity<TopicResponseDTO> updateStatusTopic(
             @PathVariable Long topicId,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody @Valid TopicUpdateStatusRequest request) {
 
-        return ResponseEntity.ok(topicService.updateStatusTopic(topicId, userDetails.getUsername()));
+        return ResponseEntity.ok(topicService.updateStatusTopic(topicId, request));
     }
 
     @GetMapping("/{id}")
@@ -95,7 +90,7 @@ public class TopicsController {
         return ResponseEntity.ok(topicService.getTopicsByCourseName(courseName, pagination));
     }
 
-    @GetMapping("/{authorId}")
+    @GetMapping("/topics/{authorId}")
     public ResponseEntity<Page<TopicResponseDTO>> getTopicByAuthor(
             @RequestParam Long authorId,
             @PageableDefault(size = 10, sort = "creationDate", direction = Sort.Direction.DESC) Pageable pagination) {

@@ -1,7 +1,6 @@
 package com.api.forumHub.domain.user;
 
 import com.api.forumHub.domain.answer.AnswerResponseDTO;
-import com.api.forumHub.domain.course.CourseMapper;
 import com.api.forumHub.domain.topic.TopicResponseDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -38,7 +37,7 @@ public class UserMapper {
         List<AnswerResponseDTO> answerDTOs = user.getAnswers().stream().map(a ->
                 new AnswerResponseDTO(a.getId(), a.getMessage(), a.getCreationDate(), toDto(a.getAuthor()), a.getTopic().getId())).toList();
         List<TopicResponseDTO> topicDTOs = user.getTopics().stream().map( t ->
-                new TopicResponseDTO(t.getId(), t.getTitle(), t.getMessage(), t.getCreationDate(), t.getStatus(), CourseMapper.toDto(t.getCourse()), toDto(t.getAuthor()), answerDTOs)).toList();
+                new TopicResponseDTO(t.getId(), t.getTitle(), t.getMessage(), t.getCreationDate(), t.getStatus(), t.getCourse().getId(), toDto(t.getAuthor()), answerDTOs)).toList();
         return new UserDetailResponse(
                 user.getId(),
                 user.getName(),

@@ -3,10 +3,12 @@ package com.api.forumHub.domain.topic;
 import com.api.forumHub.domain.answer.*;
 import com.api.forumHub.domain.course.Course;
 import com.api.forumHub.domain.course.CourseRepository;
+import com.api.forumHub.domain.topic.validation.TopicOperationType;
 import com.api.forumHub.domain.topic.validation.TopicValidator;
 import com.api.forumHub.domain.user.User;
 import com.api.forumHub.domain.user.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,66 +29,53 @@ public class TopicService {
 
     private final List<TopicValidator> validators;
 
-    public TopicService(TopicRepository topicRepository, UserRepository userRepository, CourseRepository courseRepository, AnswerService answerService, List<TopicValidator> validadores) {
+    public TopicService(TopicRepository topicRepository, UserRepository userRepository, CourseRepository courseRepository, AnswerService answerService, List<TopicValidator> validators) {
         this.topicRepository = topicRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.answerService = answerService;
-        this.validators = validadores;
+        this.validators = validators;
     }
 
+    @Transactional
+    public TopicResponseDTO createTopic (@Valid TopicRequest request, String authenticatedUserEmail) {
 
-    public TopicResponseDTO createTopic (TopicRequest request, String authenticatedUserEmail) {
+        User author = authenticatedUser(authenticatedUserEmail);
 
         Course course = courseRepository.findById(request.course())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found!"));
 
-        User user = authenticatedUser(authenticatedUserEmail);
-
         Topic newTopic = new Topic();
-        newTopic.setTitle( request.title());
+        newTopic.setTitle(request.title());
         newTopic.setMessage(request.message());
         newTopic.setCreationDate(LocalDateTime.now());
         newTopic.setStatus(TopicStatus.PENDENTE);
         newTopic.setCourse(course);
-        newTopic.setAuthor(user);
+        newTopic.setAuthor(author);
 
-        topicRepository.save(newTopic);
+        Topic saved = topicRepository.save(newTopic);
 
-        return TopicMapper.toResponseDto(newTopic);
-    }
-
-    public AnswerResponseDTO replyTopic(Long topicId, AnswerRequest request, String authenticatedUserEmail) {
-
-        Topic topic = findTopic(topicId);
-
-        validators.forEach(v -> v.validate(topicId));
-
-        User user = authenticatedUser(authenticatedUserEmail);
-
-        Answer answer = new Answer();
-        answer.setMessage(request.message());
-//        answer.setCreationDate(LocalDateTime.now());
-        answer.setAuthor(user);
-        answer.setTopic(topic);
-
-        AnswerResponseDTO newResponse = AnswerMapper.toDto(answer);
-
-        answerService.createAnswer(request, authenticatedUserEmail);
-
-        return newResponse;
+        return TopicMapper.toResponseDto(saved);
     }
 
     @Transactional
-    public TopicResponseDTO updateStatusTopic (Long topicId, String authenticatedUserEmail) {
+    public AnswerResponseDTO replyTopic(Long topicId, AnswerRequest request, String authenticatedUserEmail) {
+
+        runValidators(topicId, TopicOperationType.REPLY);
+
+        Topic topic = findTopic(topicId);
+
+        User author = authenticatedUser(authenticatedUserEmail);
+
+        return answerService.createAnswer(request, author, topic);
+    }
+
+    @Transactional
+    public TopicResponseDTO updateStatusTopic (Long topicId, TopicUpdateStatusRequest request) {
+
+        runValidators(topicId, TopicOperationType.UPDATE_STATUS);
 
         Topic newTopic = findTopic(topicId);
-
-        User user = authenticatedUser(authenticatedUserEmail);
-
-        if(!newTopic.getAuthor().getEmail().equals(user.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User without permission to edit this topic!");
-        }
 
         newTopic.setStatus(TopicStatus.SOLUCIONADO);
 
@@ -96,9 +85,9 @@ public class TopicService {
     @Transactional
     public TopicResponseDTO updateTopic (Long topicId, TopicUpdateRequest request) {
 
-        Topic newTopic = findTopic(topicId);
+        runValidators(topicId, TopicOperationType.UPDATE);
 
-        validators.forEach(v -> v.validate(topicId));
+        Topic newTopic = findTopic(topicId);
 
         newTopic.setTitle(request.title());
         newTopic.setMessage(request.message());
@@ -117,7 +106,7 @@ public class TopicService {
     }
 
     public Page<TopicResponseDTO> getTopicsByCourseName(String courseName, Pageable pagination){
-        return topicRepository.existsByCourseName(courseName, pagination)
+        return topicRepository.findByCourseNameIgnoreCase(courseName, pagination)
                 .map(TopicMapper::toResponseDto);
     }
 
@@ -140,7 +129,7 @@ public class TopicService {
 
     public void deleteTopic(Long topicId) {
 
-        validators.forEach(v -> v.validate(topicId));
+        runValidators(topicId, TopicOperationType.DELETE);
 
         topicRepository.deleteById(topicId);
     }
@@ -151,12 +140,15 @@ public class TopicService {
     }
 
     private User authenticatedUser(String authenticatedUserEmail){
-        User user = userRepository.findEntityByEmail(authenticatedUserEmail);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthenticated user.");
-        }
 
-        return user;
+        return userRepository.findUserByEmail(authenticatedUserEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthenticated user."));
+    }
+
+    private void runValidators(Long topicId, TopicOperationType operationType) {
+        validators.stream()
+                .filter(v -> v.getOperationType().contains(operationType))
+                .forEach(v -> v.validate(topicId));
     }
 
 }

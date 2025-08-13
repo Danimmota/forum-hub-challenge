@@ -35,11 +35,11 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/topics", "/topics/term").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/topics", "/answers").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/topics/*", "/answers/*").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/courses", "/users/admin", "/users").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/users/**", "/answers/**", "/courses/**", "/topics/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/topics/**", "/answers/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/courses/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/*", "/answers/*", "/courses/*", "/topics/*").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/topics/*", "/answers/*").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/courses/*", "/users/*" ).hasAnyRole("ADMIN")
 
                         .anyRequest().authenticated()
                 )

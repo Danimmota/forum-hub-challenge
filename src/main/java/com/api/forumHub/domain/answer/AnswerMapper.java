@@ -4,25 +4,8 @@ import com.api.forumHub.domain.topic.Topic;
 import com.api.forumHub.domain.user.User;
 import com.api.forumHub.domain.user.UserMapper;
 
-import java.time.LocalDateTime;
 
 public class AnswerMapper {
-
-    public static Answer toEntity(AnswerRequest request) {
-        Answer answer = new Answer();
-        answer.setMessage(request.message());
-        answer.setCreationDate(LocalDateTime.now());
-
-        User author = UserMapper.toUserDtoEntity(request.author());
-        answer.setAuthor(author);
-
-        Topic topic = new Topic();
-        topic.setId(request.topic());
-
-        answer.setTopic(topic);
-
-        return answer;
-    }
 
     public static AnswerResponseDTO toDto(Answer answer) {
 
@@ -51,7 +34,6 @@ public class AnswerMapper {
 
         return answer;
     }
-
 
 }
 

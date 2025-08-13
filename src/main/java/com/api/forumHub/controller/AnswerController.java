@@ -4,7 +4,6 @@ import com.api.forumHub.domain.answer.AnswerRequest;
 import com.api.forumHub.domain.answer.AnswerResponseDTO;
 import com.api.forumHub.domain.answer.AnswerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,18 +24,17 @@ public class AnswerController {
         this.answerService = answerService;
     }
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity<AnswerResponseDTO> createAnswer(
-            @RequestBody @Valid AnswerRequest request,
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        AnswerResponseDTO responseAnswer = answerService.createAnswer(request, userDetails.getUsername());
-
-        URI uri = URI.create("/answers/" + responseAnswer.id());
-
-        return ResponseEntity.created(uri).body(responseAnswer);
-    }
+//    @PostMapping
+//    public ResponseEntity<AnswerResponseDTO> createAnswer(
+//            @RequestBody @Valid AnswerRequest request,
+//            @AuthenticationPrincipal UserDetails userDetails) {
+//
+//        AnswerResponseDTO responseAnswer = answerService.createAnswer(request, userDetails.getUsername());
+//
+//        URI uri = URI.create("/answers/" + responseAnswer.id());
+//
+//        return ResponseEntity.created(uri).body(responseAnswer);
+//    }
 
     @GetMapping("/{topicId}")
     public ResponseEntity<List<AnswerResponseDTO>> listAnswersByTopicOrderByDate(@PathVariable Long topicId) {
@@ -49,12 +47,12 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.listAnswers());
     }
 
-    @GetMapping("/{authorId}")
+    @GetMapping("/answers/{authorId}")
     public ResponseEntity<List<AnswerResponseDTO>> listAnswerByAuthor(@PathVariable Long authorId) {
         return ResponseEntity.ok(answerService.listAnswersByAuthor(authorId));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("{answerId}")
     public ResponseEntity<Void> deleteAnswer (@PathVariable Long answerId, @AuthenticationPrincipal UserDetails userDetails) {
         answerService.deleteAnswer(answerId, userDetails.getUsername());
         return ResponseEntity.noContent().build();

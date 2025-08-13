@@ -16,8 +16,13 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public CourseDTO saveCourse(CourseDTO courseDTO) {
-        Course course = courseRepository.save(CourseMapper.toEntity(courseDTO));
+    public CourseDTO saveCourse(CourseRequest request) {
+
+        Course course = new Course();
+        course.setName(request.name());
+
+        courseRepository.save(course);
+
         return CourseMapper.toDto(course);
     }
 

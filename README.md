@@ -40,15 +40,17 @@
 - ✅ Cadastro de usuários com validação de senha forte
 - ✅ Autenticação com JWT
 - ✅ Controle de acesso:
+
   - ✅ **Tópicos**:
     - Apenas `USER` autenticado podem criar novos tópicos
     - Apenas o autor pode editar um tópico
     - Apenas o autor pode atualizar o STATUS de um tópico como SOLUCIONADO
-    - Tópicos SOLUCIONADOS não podem ser editados nem receber novas respostas - Validado
+    - Tópicos SOLUCIONADOS não podem ser editados nem receber novas respostas - *Validado*
     - Filtragem de tópicos por data de criação (mais recentes primeiro)
     - Filtragem por termo no título (case-insensitive)
     - Listagem de topicos por nome do curso ou autor
-    - Somente o autor e `ADMIN` podem deletar um tópico - Validado
+    - Somente o autor e `ADMIN` podem deletar um tópico - *Validado*
+    
   - ✅ **Respostas**: 
     - Apenas `USER` autenticado pode responder um tópico
     - Listagem de respostas por tópico ou autor
@@ -76,7 +78,7 @@
   - topics-controller
     - POST /topics
     - POST /topics/{topicId}/answers
-    - PUT /topics/{topicId}
+    - PUT /topics//topic/{topicId}
     - PUT /topics/{id}
     - GET /topics
     - GET /topics/{id}
@@ -84,13 +86,71 @@
     - GET /topics/term
     - GET /topics/search
     - DELETE /topics/{id}
+  
 - Usuários
   - user-controller
     - POST /users
     - POST /users/admin
     - GET /users
+      -  **Payload**
+    ```
+    Exemplo de entrada:
+    {
+    "page": 0,
+    "size": 10,
+    "sort":"name"
+    }
+    ```
+    ```
+    Exemplo de saída
+    Response body:
+    {
+    "content": [
+    {
+    "id": 1,
+    "name": "Daniela",
+    "email": "daniela@email.com",
+    "role": "ROLE_USER"
+    },
+    {
+    "id": 4,
+    "name": "Joana",
+    "email": "joana@email.com",
+    "role": "ROLE_USER"
+    },
+    {
+    "id": 3,
+    "name": "Maria",
+    "email": "maria@email.com",
+    "role": "ROLE_ADMIN"
+    }
+    ],
+    "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10,
+    "sort": {
+    "empty": false,
+    "unsorted": false,
+    "sorted": true
+    }
+    "offset": 0,
+    "unpaged": false,
+    "paged": true
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 5,
+    "size": 10,
+    "number": 0,
+    "sort": {
+    "empty": false,
+    "unsorted": false,
+    "sorted": true
+    }
+    ```
     - GET /users/{id}
     - DELETE /users/{id}
+    
 - Autenticação
   - authentication-controller
     - POST /login
@@ -109,18 +169,19 @@
         "JWTtoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJGb3J1bUh1YiBBUEkiLCJzdWIiOiJqb2FuYUBlbWFpbC5jb20iLCJpZCI6NCwiaWF0IjoxNzU0OTU4NzQ1LCJleHAiOjE3NTQ5NjU5NDV9.ylmxPQgrI7W6_d2im_rNHrauDfb_cVeLtUT4IdmaQ5g"
     }
     ```
+  
 - Cursos
   - course-controller
     - POST /courses
     - GET /courses
     - GET /courses/search
     - DELETE/courses/{id}
+  
 - Respostas
   - answer-controller
-    - POST /answers
     - GET /answers
     - GET /answers/{topicId}
-    - GET /answers/{authorId}
+    - GET /answers/answers/{authorId}
 
 ---
 

@@ -1,6 +1,7 @@
 package com.api.forumHub.controller;
 
 import com.api.forumHub.domain.course.CourseDTO;
+import com.api.forumHub.domain.course.CourseRequest;
 import com.api.forumHub.domain.course.CourseService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
@@ -24,8 +25,8 @@ public class CourseController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<CourseDTO> created(@RequestBody @Valid CourseDTO courseDTO) {
-        CourseDTO newCourse = courseService.saveCourse(courseDTO);
+    public ResponseEntity<CourseDTO> created(@RequestBody @Valid CourseRequest request) {
+        CourseDTO newCourse = courseService.saveCourse(request);
 
         URI uri = URI.create("/courses/" + newCourse.id());
 

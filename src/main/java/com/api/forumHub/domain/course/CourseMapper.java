@@ -1,9 +1,7 @@
 package com.api.forumHub.domain.course;
 
-import com.api.forumHub.domain.answer.Answer;
 import com.api.forumHub.domain.answer.AnswerMapper;
 import com.api.forumHub.domain.answer.AnswerResponseDTO;
-import com.api.forumHub.domain.topic.Topic;
 import com.api.forumHub.domain.topic.TopicResponseDTO;
 import com.api.forumHub.domain.user.UserMapper;
 
@@ -11,57 +9,25 @@ import java.util.List;
 
 public class CourseMapper {
 
-    public static Course toEntity(CourseDTO dto) {
-        Course course = new Course();
-        course.setId(dto.id());
-        course.setName(dto.name());
-
-        List<Topic> topics = (dto.topics() == null ? List.<TopicResponseDTO>of() : dto.topics())
-                .stream().map(t -> {
-
-            Topic topic = new Topic();
-            topic.setId(t.id());
-            topic.setTitle(t.title());
-            topic.setMessage(t.message());
-            topic.setCreationDate(t.creationDate());
-            topic.setStatus(t.status());
-            topic.setCourse(course);
-            topic.setAuthor(UserMapper.toUserDtoEntity(t.author()));
-
-            List<Answer> answers = (t.answers() == null ? List.<AnswerResponseDTO>of() : t.answers())
-                    .stream().map(AnswerMapper::fromResponseDto).toList();
-
-            topic.setAnswers(answers);
-
-            return topic;
-        }).toList();
-
-        course.setTopics(topics);
-
-        return course;
-    }
-
     public static CourseDTO toDto(Course course) {
-        List<TopicResponseDTO> topicDTOs = course.getTopics().stream().map(t -> {
-            List<AnswerResponseDTO> answerDTOs = t.getAnswers().stream()
+        List<TopicResponseDTO> topicDTOs = course.getTopics().stream().map(topic -> {
+
+            List<AnswerResponseDTO> answerDTOs = topic.getAnswers().stream()
                     .map(AnswerMapper::toDto)
                     .toList();
+
             return new TopicResponseDTO(
-                    t.getId(),
-                    t.getTitle(),
-                    t.getMessage(),
-                    t.getCreationDate(),
-                    t.getStatus(),
-                    CourseMapper.toDto(t.getCourse()),
-                    UserMapper.toDto(t.getAuthor()),
+                    topic.getId(),
+                    topic.getTitle(),
+                    topic.getMessage(),
+                    topic.getCreationDate(),
+                    topic.getStatus(),
+                    topic.getCourse().getId(),
+                    UserMapper.toDto(topic.getAuthor()),
                     answerDTOs
             );
         }).toList();
 
-        return new CourseDTO(
-                course.getId(),
-                course.getName(),
-                topicDTOs
-        );
+            return new CourseDTO(course.getId(), course.getName(), topicDTOs);
     }
 }

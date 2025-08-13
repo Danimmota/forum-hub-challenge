@@ -11,5 +11,5 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
     List<Answer> findByTopicIdOrderByCreationDateDesc(Long topicId);
 
     @Query("SELECT a FROM Answer a WHERE a.author.id = :authorId ORDER BY a.creationDate DESC")
-    List<Answer> findAnswerByAuthor(@Param("autorId") Long authorId);
+    List<Answer> findAnswerByAuthorId(@Param("authorId") Long authorId);
 }

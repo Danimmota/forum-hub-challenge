@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Component
-public class ValidationUpdateTopic implements TopicValidator {
+public class ValidationUpdateStatusTopic implements TopicValidator {
 
     private final TopicRepository topicRepository;
 
-    public ValidationUpdateTopic(TopicRepository topicRepository) {
+    public ValidationUpdateStatusTopic(TopicRepository topicRepository) {
         this.topicRepository = topicRepository;
     }
 
@@ -24,5 +26,10 @@ public class ValidationUpdateTopic implements TopicValidator {
         if(topic.isClosed()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The topic is already marked as resolved.");
         }
+    }
+
+    @Override
+    public List<TopicOperationType> getOperationType() {
+        return List.of(TopicOperationType.REPLY, TopicOperationType.UPDATE, TopicOperationType.UPDATE_STATUS);
     }
 }

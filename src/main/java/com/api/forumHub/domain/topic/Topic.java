@@ -4,7 +4,6 @@ import com.api.forumHub.domain.answer.Answer;
 import com.api.forumHub.domain.course.Course;
 import com.api.forumHub.domain.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -28,7 +27,6 @@ public class Topic {
 
     private String message;
 
-    @NotNull
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 

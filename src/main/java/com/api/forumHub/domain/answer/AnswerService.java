@@ -26,17 +26,12 @@ public class AnswerService {
         this.userRepository = userRepository;
     }
 
-    public AnswerResponseDTO createAnswer(AnswerRequest request, String authenticatedUserEmail) {
-
-        Topic topic = topicRepository.findById(request.topic())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found!"));
-
-        User user = authenticatedUser(authenticatedUserEmail);
+    public AnswerResponseDTO createAnswer(AnswerRequest request, User author, Topic topic) {
 
         Answer answer = new Answer();
         answer.setMessage(request.message());
         answer.setCreationDate(LocalDateTime.now());
-        answer.setAuthor(user);
+        answer.setAuthor(author);
         answer.setTopic(topic);
 
         answerRepository.save(answer);
@@ -45,6 +40,9 @@ public class AnswerService {
     }
 
     public List<AnswerResponseDTO> listAnswersByTopicOrderByDate(Long topicId) {
+        topicRepository.findById(topicId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found!"));
+
         List<Answer> answers = answerRepository.findByTopicIdOrderByCreationDateDesc(topicId);
         return answers.stream().map(AnswerMapper::toDto).toList();
     }
@@ -56,7 +54,10 @@ public class AnswerService {
     }
 
     public List<AnswerResponseDTO> listAnswersByAuthor(Long authorId) {
-        List<Answer> answers = answerRepository.findAnswerByAuthor(authorId);
+        userRepository.findById(authorId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found!"));
+
+        List<Answer> answers = answerRepository.findAnswerByAuthorId(authorId);
         return answers.stream().map(AnswerMapper::toDto).toList();
     }
 

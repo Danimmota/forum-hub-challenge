@@ -1,7 +1,6 @@
 package com.api.forumHub.domain.topic;
 
 import com.api.forumHub.domain.answer.AnswerResponseDTO;
-import com.api.forumHub.domain.course.CourseDTO;
 import com.api.forumHub.domain.user.UserResponseDTO;
 
 import java.time.LocalDateTime;
@@ -13,10 +12,9 @@ public record TopicResponseDTO(
         String message,
         LocalDateTime creationDate,
         TopicStatus status,
-        CourseDTO course,
+        Long courseId,
         UserResponseDTO author,
         List<AnswerResponseDTO> answers
         ) {
-
 }
 

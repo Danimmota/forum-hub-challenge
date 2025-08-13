@@ -54,7 +54,7 @@ public class UserService {
         userRepository.findById(id)
                 .ifPresentOrElse(
                         userRepository::delete,
-                        () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by id." + id);
+                        () -> { throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found by id: " + id);
                         }
                 );
     }
