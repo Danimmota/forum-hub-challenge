@@ -182,6 +182,7 @@
     - GET /answers
     - GET /answers/{topicId}
     - GET /answers/answers/{authorId}
+    - DELETE /answer/{answerId}
 
 ---
 
@@ -221,8 +222,9 @@ api.security.token.secret=${JWT_TOKEN}
     - Responder há um tópico ✅
 ---
 ## 📄 Documentação
-
- - Acesse o link após start da aplicação: http://localhost:8081/swagger-ui/index.html#/
+- 
+- Swagger
+  - Acesse o link após start da aplicação: http://localhost:8081/swagger-ui/index.html#/
 
 ---
 # 🧾 Licença
