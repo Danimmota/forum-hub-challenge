@@ -17,21 +17,12 @@
 
 ## 📚 Tecnologias Utilizadas
 
-- Java 21
-- Spring Boot
-- Spring Data JPA
-- Spring Security 
-- Token JWT
-  - Auth0
-- Bean Validation
-- Flyway para criação do banco de dados
-- MySQL
-- Testes unitários:
-  - JUnit 5
-  - Mockito
-- Lombok
-- Maven
-- Swagger/OpenAPI
+- **Backend:** Java 21, Spring Boot, Spring Data JPA, Spring Security, Token JWT, Auth0, Bean Validation
+- **Banco de Dados:** Flyway (para criação do banco de dados), MySQL
+- **Testes unitários:** JUnit 5, Mockito
+- **Controle de Versão:** Git
+- **Documentação:** Swagger/OpenAPI
+- **Outras:** Lombok, Maven
 
 ---
 
@@ -193,22 +184,27 @@
 
 git clone https://github.com/Danimmota/forum-hub-challenge.git
 ```
-- Vá na pasta em que clonou e abra o Git Bash
+- Vá na pasta em que clonou e abra o Git Bash ou entre no projeto via terminal com: `cd forum_Hub`
 - 
 ### 2. Configure o banco de dados
-- Crie um banco de dados no MYSQL Workbench com o nome `forum_hub` com o scrip: 
+- Crie um banco de dados no MYSQL Workbench com o nome `forum_hub_api` com o scrip: 
 ```
-CREATE DATABASE forum_hub
+CREATE DATABASE forum_hub_api
 ```
 - Após atualize as configurações no `aplication.properties`:
 ```
 server.port=8081
 
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.datasource.url=jdbc:mysql://localhost:3306/forum_hub
+spring.datasource.url=jdbc:mysql://localhost:3306/forum_hub_api
 spring.datasource.username=root
 spring.datasource.password=${MYSQL_PASSWORD}
 api.security.token.secret=${JWT_TOKEN}
+```
+
+### 3. Compile e rode a aplicação:
+```
+./mvnw spring-boot:run
 ```
 
 ---
@@ -236,7 +232,7 @@ api.security.token.secret=${JWT_TOKEN}
 
 ## 👩‍💻 Autora
 
-Desenvolvido por Daniela Medeiro Mota em realização do Challenge: ForumHub ONE - Oracle Next Education + ALURA
+Desenvolvido por Daniela Mota em realização do Challenge: ForumHub ONE - Oracle Next Education + ALURA
 
 📧 Email: danielamedeiromota@hotmail.com
 
